@@ -1,0 +1,135 @@
+{% load static %} {% load humanize %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static "sass/modal.css" %}"> <link
+    rel="shortcut icon" href="{% static "images/favicon.ico" %}"
+    type="image/x-icon">
+    <style>
+      .post-img{
+        background-color: #1c1c1e;
+
+      }
+    </style>
+    <title>Instagram</title>
+  </head>
+  <body>
+    <div class="post-details">
+      <div class="post-img">
+        {% if post.get_type == 'video' %}
+        <video class="video" autoplay controls loop>
+          <source src="{{post.picture.url }}" />
+        </video>
+        {% else %}
+        <img src="{{post.picture.url }}" />
+        {% endif %}
+      </div>
+
+      <div class="post-data">
+        <div class="user-info user">
+          <div class="profile">
+            {% if post.user.profile.picture %}
+            <img
+              src="{{ post.user.profile.picture.url }}"
+              alt="Placeholder image"
+            />
+            {% else %} <img src="{% static "images/user.png" %}"
+            alt="Placeholder image"> {% endif %}
+            <h3>@{{ post.user.username }}</h3>
+          </div>
+          <div>
+            <a href="/"><img src="{% static "images/accueil.png" %}" alt=""></a>
+          </div>
+        </div>
+        <hr />
+        <div class="comments">
+          {% for comment in comments %}
+          <div class="comment-user">
+            <div class="user-info">
+              {% if comment.user.profile.picture %}
+              <img
+                src="{{ comment.user.profile.picture.url }}"
+                alt="Placeholder image"
+              />
+              {% else %} <img src="{% static "images/user.png" %}"
+              alt="Placeholder image"> {% endif %}
+              <div class="comment">
+                <h3>@{{ comment.user.username }}</h3>
+                <span> {{ comment.body }}.</span>
+                <p>{{ comment.date|naturaltime }}</p>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="post">
+          <div class="like">
+            <a href="{% url 'postlike' post.id %}">
+              {% if post.userlike %} 
+              <img class="" src="{% static "images/heart.png"%}" > 
+              {% else %} 
+              <img class="" src="{% static "images/love.png" %} " >
+               {% endif %}
+            </a>
+            <img src="{% static "images/bubble-chat.png" %} " >
+            <img src="{% static "images/send.png" %}" alt="" />
+          </div>
+
+          <div class="save">
+            {% if post.postsaved %}
+            <a href="{% url 'postfavorite' post.id %}">
+                <img src="{% static "images/save_black.png"%}" >
+            </a>
+            {% else %}
+            <a href="{% url 'postfavorite' post.id %}">
+                <img src="{% static "images/save-instagram.png" %}" >
+            </a>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="post-number">
+          {{ post.caption }}
+          <p>
+            {% for tag in post.tags.all %}<a href="{{ tag.get_absolute_url }}"
+              >#{{ tag }}</a
+            >{% endfor %}
+          </p>
+          <span>{{ post.likes }} likes</span>
+          <p>{{ post.posted }}</p>
+        </div>
+        <hr />
+        <div class="form">
+          <form method="post" action="" role="form">
+            {% csrf_token %}
+            <div class="input">
+              <svg
+                aria-label="Emoji"
+                class="cursor-pointer"
+                fill="#000"
+                height="24"
+                role="img"
+                viewBox="0 0 48 48"
+                width="24"
+              >
+                <path
+                  d="M24 48C10.8 48 0 37.2 0 24S10.8 0 24 0s24 10.8 24 24-10.8 24-24 24zm0-45C12.4 3 3 12.4 3 24s9.4 21 21 21 21-9.4 21-21S35.6 3 24 3z"
+                ></path>
+                <path
+                  d="M34.9 24c0-1.4-1.1-2.5-2.5-2.5s-2.5 1.1-2.5 2.5 1.1 2.5 2.5 2.5 2.5-1.1 2.5-2.5zm-21.8 0c0-1.4 1.1-2.5 2.5-2.5s2.5 1.1 2.5 2.5-1.1 2.5-2.5 2.5-2.5-1.1-2.5-2.5zM24 37.3c-5.2 0-8-3.5-8.2-3.7-.5-.6-.4-1.6.2-2.1.6-.5 1.6-.4 2.1.2.1.1 2.1 2.5 5.8 2.5 3.7 0 5.8-2.5 5.8-2.5.5-.6 1.5-.7 2.1-.2.6.5.7 1.5.2 2.1 0 .2-2.8 3.7-8 3.7z"
+                ></path>
+              </svg>
+              {{form.body }}
+            </div>
+            <div>
+              <button href="" type="submit" name="action">Post</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,206 @@
+{% load static %}
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static "sass/modal.css" %}"> <link
+    rel="shortcut icon" href="{% static "images/favicon.ico" %}"
+    type="image/x-icon">
+    <title>Instagram</title>
+    <style>
+      /* CSS */
+      body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+      .post-details {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border-radius: 3px;
+        width: 1000px;
+        max-width: 90%;
+      }
+
+      .modal {
+        background-color: white;
+        border-radius: 5px;
+        padding: 20px;
+        width: 400px;
+        max-width: 90%;
+        position: relative;
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .modal-header h2 {
+        margin: 0;
+      }
+
+      .close-modal {
+        background-color: transparent;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+      }
+
+      .search-results {
+        max-height: 300px;
+        overflow-y: auto;
+      }
+
+      .search-results .user {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        border-bottom: 1px solid #ccc;
+        cursor: pointer;
+      }
+
+      .search-results .user img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+      }
+
+      .search-results .user .username {
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="modal-overlay">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>Search Users</h2>
+          <button class="close-modal">&times;</button>
+        </div>
+        <div class="modal-content">
+          <div class="form">
+            <form action="">
+              <div class="input">
+                <svg
+                  aria-label="Emoji"
+                  class="cursor-pointer"
+                  fill="#000"
+                  height="24"
+                  role="img"
+                  viewBox="0 0 48 48"
+                  width="24"
+                >
+                  <path
+                    d="M24 48C10.8 48 0 37.2 0 24S10.8 0 24 0s24 10.8 24 24-10.8 24-24 24zm0-45C12.4 3 3 12.4 3 24s9.4 21 21 21 21-9.4 21-21S35.6 3 24 3z"
+                  ></path>
+                  <path
+                    d="M34.9 24c0-1.4-1.1-2.5-2.5-2.5s-2.5 1.1-2.5 2.5 1.1 2.5 2.5 2.5 2.5-1.1 2.5-2.5zm-21.8 0c0-1.4 1.1-2.5 2.5-2.5s2.5 1.1 2.5 2.5-1.1 2.5-2.5 2.5-2.5-1.1-2.5-2.5zM24 37.3c-5.2 0-8-3.5-8.2-3.7-.5-.6-.4-1.6.2-2.1.6-.5 1.6-.4 2.1.2.1.1 2.1 2.5 5.8 2.5 3.7 0 5.8-2.5 5.8-2.5.5-.6 1.5-.7 2.1-.2.6.5.7 1.5.2 2.1 0 .2-2.8 3.7-8 3.7z"
+                  ></path>
+                </svg>
+                <input
+                  class="flex-auto text-sm outline-none border-none bg-transparent"
+                  type="text"
+                  value="{{ request.GET.q }}"
+                  placeholder="Search Users..."
+                  name="q"
+                />
+              </div>
+              <div><button type="submit">Search</button></div>
+            </form>
+          </div>
+          <div class="search-results">
+            {% for user in users %}
+            <div class="message-user">
+              <div class="user-info">
+                {% if user.profile.picture %}
+                <img
+                  src="{{ user.profile.picture.url }}"
+                  alt="Placeholder image"
+                />
+                {% else %} <img src="{% static "images/user.png" %}"
+                alt="Placeholder image" /> {% endif %}
+                <h3>
+                  <small>@{{ user.username }}</small>
+                </h3>
+              </div>
+              <div class="message">
+                <a href="{% url 'newconversation' user.username %}">
+                  <button class="button">message</button>
+                </a>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // JavaScript
+      const modal = document.querySelector(".modal-overlay");
+      const closeModal = document.querySelector(".close-modal");
+      const searchInput = document.getElementById("search-input");
+      const searchResults = document.querySelector(".search-results");
+
+      // Open the modal when the user clicks on a link or button
+      // Replace this with your own logic to open the modal
+      document.addEventListener("click", (event) => {
+        if (event.target.matches(".open-modal")) {
+          modal.style.display = "flex";
+        }
+      });
+
+      // Close the modal when the user clicks the close button
+      closeModal.addEventListener("click", () => {
+        modal.style.display = "none";
+      });
+
+      // Handle the search functionality
+      searchInput.addEventListener("input", async () => {
+        const query = searchInput.value.trim();
+        if (query) {
+          const users = await searchUsers(query);
+          displaySearchResults(users);
+        } else {
+          searchResults.innerHTML = "";
+        }
+      });
+
+      async function searchUsers(query) {
+        // Replace this with your own function to search for users
+        // This is just an example using a fake API
+        const response = await fetch(`/api/users?q=${query}`);
+        const data = await response.json();
+        return data.users;
+      }
+
+      function displaySearchResults(users) {
+        searchResults.innerHTML = "";
+        users.forEach((user) => {
+          const userElement = document.createElement("div");
+          userElement.classList.add("user");
+          userElement.innerHTML = `
+      <img src="${user.profilePicture}" alt="${user.username}">
+      <div class="username">${user.username}</div>
+    `;
+          userElement.addEventListener("click", () => {
+            // Handle user selection
+            console.log("Selected user:", user);
+            modal.style.display = "none";
+          });
+          searchResults.appendChild(userElement);
+        });
+      }
+    </script>
+  </body>
+</html>

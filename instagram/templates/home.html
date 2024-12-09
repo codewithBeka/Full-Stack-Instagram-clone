@@ -1,0 +1,993 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    {% load humanize %} 
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="{% static "images/favicon.ico" %}" type="image/x-icon">
+    <title>Instagram</title>
+    <link rel="stylesheet" href="{% static "sass/vender/bootstrap.css" %}">
+    <link rel="stylesheet" href="{% static "sass/vender/bootstrap.min.css" %}">
+    <link rel="stylesheet" href="{% static "owlcarousel/owl.theme.default.min.css" %}">
+    <link rel="stylesheet" href="{% static "owlcarousel/owl.carousel.min.css" %}">
+    <link rel="stylesheet" href="{% static "https://cdnjs.cloudflare.com/ajax/libs/emojionearea/3.4.2/emojionearea.min.css" %}">
+    <link rel="stylesheet" href="{% static "sass/main.css" %}">
+    <link rel="stylesheet" href="{% static "style.css" %}">
+    <style>
+        ::-webkit-scrollbar{display: none;}
+        .stories-container {
+            display: flex;
+            background: #fff;
+            box-shadow: 0 3px 24px -8px rgba(0, 0, 0, 0.3);
+            width: 640px;
+            margin: 0 auto;
+            padding: 20px 36px;
+            border-radius: 8px;
+            gap: 48px;
+            overflow: hidden;
+            overflow-x: scroll;
+            box-sizing: border-box;
+          }
+          
+          .stories-container .content img {
+            height: 90px;
+            width: 90px;
+            border-radius: 50%;
+            object-fit: cover;
+            z-index: 300;
+            position: relative;
+            vertical-align: middle;
+          }
+          
+          .stories-container .content {
+            position: relative;
+            cursor: pointer;
+          }
+          
+          .stories-container .content::before {
+            content: "";
+            height: 98px;
+            width: 98px;
+            background: #fff;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 101;
+          }
+          
+          .stories-container .content::after {
+            content: "";
+            height: 106px;
+            width: 106px;
+            background: linear-gradient(#dd2a7b, #f58529);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 100;
+          }
+          
+          .story-full {
+            background: #222;
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: 100%;
+            z-index: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 100ms ease;
+          }
+          .is-active{
+            opacity:1;
+          }
+          
+          .story-full.active {
+            opacity: 1;
+            pointer-events: auto;
+          }
+          
+          .story-full .close-btn {
+            position: fixed;
+            right: 32px;
+            top: 32px;
+            width: 32px;
+            cursor: pointer;
+          }
+          
+          .story-full .content .left-arrow,
+          .story-full .content .right-arrow {
+            width: 60px;
+            cursor: pointer;
+          }
+          
+          .story-full .content {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            position: relative;
+          }
+          
+          .story-full img {
+            height: 90%;
+          }
+          
+          .story-full .content .title {
+            position: absolute;
+            bottom: 26px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #fff;
+            font-family: "Roboto", sans-serif;
+            line-height: 2;
+            padding: 8px 32px;
+          }
+          
+          @media (max-width: 700px) {
+            .stories-container {
+              width: 90%;
+            }
+          
+            .stories-container .content img {
+              width: 60px;
+              height: 60px;
+            }
+          
+            .stories-container .content::before {
+              height: 70px;
+              width: 70px;
+            }
+          
+            .stories-container .content::after {
+              width: 80px;
+              height: 80px;
+            }
+          
+            .story-full .content img {
+              height: 65%;
+            }
+          }
+          
+    </style>
+</head>
+<body>
+
+               
+
+
+  
+    <div class="post_page">
+          <!--***** nav menu start ****** -->
+          <div class="nav_menu">
+            <div class="fix_top">
+                <!-- nav for big->medium screen -->
+                <div class="nav">
+                    <div class="logo">
+                        <a href="{% url "home" %}">
+                            <img class="d-block d-lg-none small-logo" src="{% static "images/instagram.png" %}" alt="logo">
+                            <img class="d-none d-lg-block" src=" {% static "images/logo_menu.png" %}" alt="logo">
+                        </a>
+                    </div>
+                    <div class="menu">
+                        <ul>
+                            <li>
+                                <a class="active" href="{% url "home" %}">
+                                    <img src=" {% static "images/accueil.png"  %}">
+                                    <span class="d-none d-lg-block ">Home</span>
+                                </a>
+                            </li>
+                            <li id="search_icon">
+                                <a href="#">
+                                    <img src=" {% static "images/search.png"  %}">
+                                    <span class="d-none d-lg-block search">Search </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url "explore" %}">
+                                    <img src=" {% static "images/compass.png"  %}">
+                                    <span class="d-none d-lg-block ">Explore</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="./reels.html">
+                                    <img src=" {% static "images/video.png"  %}">
+                                    <span class="d-none d-lg-block ">Reels</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'inbox' %}">
+                                    <img src=" {% static "images/send.png"  %}">
+                                    <span class="d-none d-lg-block ">
+                                        Messages
+                                    {% if directs_count %}
+                                    <span class="badge">{{ directs_count }}</span>
+                                    {% endif %}
+                                </span>
+                                </a>
+                            </li>
+                            
+                            <li class="notification_icon">
+                                <a href="#">
+                                    <img src=" {% static "images/love.png"  %}">
+                                    <span class="d-none d-lg-block ">Notifications
+                                        {% if count_notifications %}
+                                       <span class="badge">{{ count_notifications }}</span>
+                                       {% endif %}
+
+                                    </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url "newpost" %}" data-bs-toggle="modal" data-bs-target="#create_modal">
+                                    <img src=" {% static "images/tab.png"  %}">
+                                    <span class="d-none d-lg-block ">Create</span>
+                                </a>
+
+                            </li>
+                            <li>
+                                <a href="{% url 'profile' request.user %}">
+                                {% if profile.picture %}
+                                    <img class="circle story"  src="{{ profile.picture.url }}">
+                                  {% else %}
+                                    <img class="circle story"  src="{% static "images/user.png" %}">
+                                  {% endif %}
+                                  <span class="d-none d-lg-block ">Profile</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="more">
+                        <div class="btn-group dropup">
+                            <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                <img src="{%  static "images/menu.png"  %}">
+                                <span class="d-none d-lg-block ">More</span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">
+                                        <span>Settings</span>
+                                        <img src="./images/reglage.png">
+                                    </a></li>
+                                <li><a class="dropdown-item" href="#">
+                                        <span>Your activity</span>
+                                        <img src="./images/history.png">
+                                    </a></li>
+                                <li><a class="dropdown-item" href="#">
+                                        <span>Saved</span>
+                                        <img src="./images/save-instagram.png">
+                                    </a></li>
+                                <li><a class="dropdown-item" href="#">
+                                        <span>Switch apperance</span>
+                                        <img src="./images/moon.png">
+                                    </a></li>
+                                <li><a class="dropdown-item" href="#">
+                                        <span>Report a problem</span>
+                                        <img src="./images/problem.png">
+                                    </a></li>
+                                <li><a class="dropdown-item bold_border" href="#">
+                                        <span>Switch accounts</span>
+                                    </a></li>
+                                <li><a class="dropdown-item" href="./login.html">
+                                        <span>Log out</span>
+                                    </a></li>
+                            </ul>
+                        </div>
+                        <!--  -->
+
+                    </div>
+                </div>
+                <!-- nav for small screen  -->
+                <div class="nav_sm">
+                    <div class="content">
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                <img class="logo" src="{% static "images/logo_menu.png"%}"/>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">
+                                        <span>Following</span>
+                                        <img src="{% static "images/add-friend.png"%}"/>
+                                    </a>
+                                </li>
+                                <li><a class="dropdown-item" href="#">
+                                        <span>Favorites</span>
+                                        <img src="{% static "images/star.png"%}"/>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="left">
+                            <div class="search_bar">
+                                <div class="input-group">
+                                    <div class="form-outline">
+                                        <div>
+                                            <img src="{% static "images/search.png"%}"/ alt="search">
+                                        </div>
+                                        <input type="search" id="form1" class="form-control" placeholder="Search" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="notifications notification_icon">
+                                <a href="notification.html">
+                                    <img src="{% static "images/love.png"%}"/>
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- nav for ex-small screen  -->
+                <div class="nav_xm">
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            <img class="logo" src="{% static "images/logo_menu.png"%}"/>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">
+                                    <span>Following</span>
+                                    <img src="{% static "images/add-friend.png"%}"/>
+                                </a></li>
+                            <li><a class="dropdown-item" href="#">
+                                    <span>Favorites</span>
+                                    <img src="{% static "images/star.png"%}"/>
+                                </a></li>
+                        </ul>
+                    </div>
+                    <div class="left">
+
+                        <img src="{% static "images/send.png"%}"/>
+                        <a href="notification.html">
+                            <img class="notification_icon" src="{% static "images/love.png"%}"/>
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+            <!-- menu in the botton for smal screen  -->
+            <div class="nav_bottom">
+                <a href="/"><img src="{% static "images/accueil.png" %}"/></a>
+                <a href="{% url "explore" %}"><img src="{% static "images/compass.png" %}"/></a>
+                <a href=" reels.html"><img src="{% static "images/video.png" %}"/></a>
+                <a href="#" data-bs-toggle="modal" data-bs-target="#create_modal"><img src="{% static "images/tab.png" %}"/></a>
+                <a href="{% url "profile" request.user%}">     
+                        {% if profile.picture %}
+                        <img class="circle story"  src="{{ profile.picture.url }}">
+                      {% else %}
+                        <img class="circle story"  src="{% static "images/user.png" %}">
+                      {% endif %}
+                </a>
+            </div>
+        </div>
+        <!-- search  -->
+        <div id="search" class="search_section" >
+            <h2>Search</h2>
+            <form method="GET" id="search" action="{% url 'home' %}">
+                <input type="text" name="search" placeholder="Search users">
+            </form>
+            <div class="find">
+                <div class="desc">
+                    <h4>Recent</h4>
+                    <p><a href="#">Clear all</a></p>
+                </div>
+                <div class="account">
+                                        
+                    {% if searched_users %}
+                    {% for user in searched_users %}
+                    <div class="cart">
+                        <div>
+                            <div class="img">
+                                <a href="{% url 'profile' user.username %}">
+                                {% if user.profile.picture %}
+                                    <img src="{{ user.profile.picture.url }}" alt="{{ user.username }} profile picture">
+                                {% else %}
+                                    <img src="{% static 'images/user.png' %}" alt="Placeholder profile picture">
+                                {% endif %}
+                                </a>
+                            </div>
+                            <div class="info">
+                                <p class="name">           
+                                    {{ user.first_name }} {{ user.last_name }}
+                                </p>
+                                <p class="second_name">@{{ user.username }}</p>
+                                <p>Followers: {{ user.follower_count }}</p>
+                            </div>
+                        </div>
+                        <div class="clear">
+                            <a href="#">X</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <!-- search  -->
+        <!-- notification -->
+        <div id="notification" class="notification_section">
+            {% if notifications %}
+            <h2>Notifications</h2>
+  
+            <div class="notifications">
+                          
+           {% for notification in notifications %}
+                {% if notification.notification_type == 3 %}
+                <div class="notif follow_notif">
+                    <div class="cart">
+                        <div>
+                            <div class="img">
+                                {% if notification.sender.profile.picture %}
+                                <img src="{{ notification.sender.profile.picture.url }}" alt="Placeholder image">
+                              {% else %}
+                                <img src="{% static "images/user.png" %}" alt="Placeholder image">
+                            {% endif %}
+                            </div>
+                            <div class="info">
+                                <p class="name">
+                                    <strong>@{{ notification.sender.username }}</strong>  
+                                    <span class="desc">started following you.</span>
+                                    <span class="time">{{ notification.date|naturaltime }}</span>
+                                </p>
+
+                            </div>
+                        </div>
+                        <div class="follow_you">
+                            <button class="follow_text">Follow</button>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if notification.notification_type == 2 %}
+                <div class="notif follow_notif">
+                    <div class="cart">
+                        <div>
+                            <div class="img">
+                            {% if notification.sender.profile.picture %}
+                                <img src="{{ notification.sender.profile.picture.url }}" alt="Placeholder image">
+                              {% else %}
+                                <img src="{% static "images/user.png" %}" alt="Placeholder image">
+                            {% endif %}
+                        </div>
+                            <div class="info">
+                                <p class="name">
+                                    <strong>@{{ notification.sender.username }}</strong>  
+                                    <span class="desc">{{ notification.text_preview }} comment your post</span>
+                                    <span class="time">{{ notification.date|naturaltime }}</span>
+                                </p>
+
+                            </div>
+                        </div>
+                        <div class="story_like">
+                            <img src="{{ notification.post.picture.url }}">                        
+                        </div>
+                    </div>
+                </div> 
+                {% endif %}
+
+                {% if notification.notification_type == 1 %}
+                <div class="notif story_notif">
+                    <div class="cart">
+                        <div>
+                            <div class="img">
+                                {% if notification.sender.profile.picture %}
+                                <img src="{{ notification.sender.profile.picture.url }}" alt="Placeholder image">
+                              {% else %}
+                                <img src="{% static "images/user.png" %}" alt="Placeholder image">
+                            {% endif %}                            
+                        </div>
+                            <div class="info">
+                                <div class="info">
+                                    <p class="name">
+                                        <strong>@{{ notification.sender.username }}</strong>  
+                                        <span class="desc">liked your Post.</span>
+                                        <span class="time">{{ notification.date|naturaltime }}</span>
+                                    </p>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="story_like">
+                           <img src="{{ notification.post.picture.url }}">                        
+                         </div>
+                    </div>
+                </div>
+                {% endif %}
+
+            {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        <!--***** nav menu end ****** -->
+        <div class="story-full modal">
+            <div class="content " id="jsondata">
+              <div class="close-btn" >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="#fff"
+                  stroke-width="2"
+                  id="closeModal"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </div>
+      
+              <div class="left-arrow">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="#fff"
+                  stroke-width="2"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M15 19l-7-7 7-7"
+                  />
+                </svg>
+              </div>
+      
+              <img src="images/1.png" alt="" />
+      
+              <div class="right-arrow">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="#fff"
+                  stroke-width="2"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </div>
+      
+              <div class="title">Test Title</div>
+            </div>
+          </div>
+
+
+          
+        <div class="second_container">
+            <!--***** posts_container start ****** -->
+
+            <div class="main_section">
+                <div class="posts_container">
+                          <!-- stories container -->
+                        <div class="stories">
+                            <div class="flex " style="overflow-x: scroll;margin:14px 0px;">
+                                {% for story in stories %}
+                                <div class="flex flex-col justify-center items-center p-2 space-y-0.5 cursor-pointer">
+                                    <a name="{{ story.id }}" class="showModal">
+                                    <div class="w-16 p-0.5  rounded-full border-2 border-red-500">
+                                    {% if story.following.profile.picture %}
+                                    <img class="rounded-full border  object-cover" src="{{ story.following.profile.picture.url }}" alt="Placeholder image">
+                                    {% else %}
+                                        <img class="rounded-full border  object-cover" src="{% static "images/user.png" %}" alt="Placeholder image">
+                                    {% endif %}
+                                    </div>
+                                      <p class="text-xs">{{ story.following.username }}</p>
+                                </a>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                         
+                        
+
+                    <div class="posts">
+                        {% for post in post_items %}
+                        <div class="post" >
+                        <div class="info">
+                          <div class="person">
+                                {% if post.user.profile.picture %}
+                                <a href="{% url "profile" post.user.username%}">
+                                <img src="{{ post.user.profile.picture.url }}" alt="Placeholder image">
+                                </a>
+                            {% else %}
+                                <img src="{% static "images/user.png" %}" alt="Placeholder image">
+                            {% endif %}
+                              <a href="{% url "profile" post.user.username%}">@{{ post.user.username }}</a>
+                              <span class="circle">.</span>
+                              <span>{{ post.posted |naturaltime }}</span>
+                          </div>
+                          <div class="more">
+                            {% if post.user == profile.user %}                           
+                            <a href="{% url "update_post" post.id%}">
+                                <img src="{% static "images/edit.png" %}" alt="" style="margin-right:6px">
+                            </a>
+                            {% endif %}
+                            {% if post.user == profile.user %}                           
+                            <a href="{% url "deletePost" post.id %}">
+                                <img src="{% static "images/problem.png" %}" alt="" style="margin-right:6px">
+                            </a>
+                            {% endif %}
+                              <img src="{% static "images/show_more.png"%}" alt="show more">
+                          </div>
+                        </div>
+                        <div class="image">
+                            {% if post.get_type == 'video' %}
+                            <video class="video" muted autoplay controls loop>
+                                <source src="{{post.picture.url }}">
+                            </video>
+                            {% else %}
+                            <img src="{{post.picture.url }}">
+                            {% endif %}
+                        </div>
+                        <div class="desc">
+                          <div class="icons">
+                              <div class="icon_left d-flex">
+                                  <div class="like">
+                                    <a href="homeLikes?post_id={{post.id}}">
+                                        {% if post.is_liked %}
+                                      <img class="" src="{% static "images/heart.png"%}" >
+                                      {% else  %}
+                                      <img class="" src="{% static "images/love.png" %} " >
+                                      {% endif %}
+                                    </a>
+                                  </div>
+                                  <div class="chat">
+                                      <button type="button" class="btn p-0" data-bs-toggle="modal"
+                                          data-bs-target="#message_modal">
+                                          <img src="{% static "images/bubble-chat.png" %} " >
+                                      </button>
+                                  </div>
+                                  <div class="send">
+                                      <button type="button" class="btn p-0" data-bs-toggle="modal"
+                                          data-bs-target="#send_message_modal">
+                                          <img src="{% static "images/send.png" %} " >
+                                      </button>
+                                  </div>
+                              </div>
+                              <div class="save not_saved">
+                                {% if post.postsaved %}
+                                <a href="{% url 'savePost' post.id %}">
+                                    <img src="{% static "images/save_black.png"%}" >
+                                </a>
+                                {% else %}
+                                <a href="{% url 'savePost' post.id %}">
+                                    <img src="{% static "images/save-instagram.png" %}" >
+                                </a>
+                                {% endif %}
+                            </div>
+                          </div>
+                          <div class="liked">
+                              <a class="bold" href="">
+                                {% if post.likes == 0 %}
+                                 no likes
+                                {% elif post.likes == 1 %}
+                                      {{post.likes}} like
+                                {% else %}
+                                {{ post.likes }} likes                                
+                                {% endif %}
+                            </a>
+                          </div>
+                          <div class="post_desc">
+                              <p>
+                                  <a class="bold" href="{% url "profile" post.user.username%}">{{ post.user.username }}</a>
+                                  {{ post.caption }}
+                              </p>
+                              {% for comment in comments %}
+                              {% if comment.post == post %}
+                                {% if comment.user == profile.user %}
+                                <div class="comment">
+                                        <p><strong> <a class="bold" href="{% url "profile" post.user.username%}">{{ comment.user.username }} </a></strong> {{ comment.body }}</p>
+                                    </div>
+                                {% endif %}
+                             {% endif %}
+                             {% endfor %}
+      <p><a class="gray" href="{% url "postdetails" post.id%}">View all {{ post.comments.count }} comments</a></p>                              <form method="post" action="{% url 'comment_post' post.id %}">
+                                {% csrf_token %}
+                              <input type="text"  name="comment_body" placeholder="Add a comments...">
+                              </form>
+                          </div>
+                        </div>
+                    </div>
+                        {% endfor %}
+                    </div>
+
+                </div>
+            </div>
+            <!--***** posts_container end ****** -->
+
+            <!--***** followers_container start ****** -->
+            <div class="followers_container">
+                <div>
+                    <div class="cart">
+                        <div>
+                            <div class="img">
+                                <a href="{% url 'profile' request.user %}">
+                                    {% if profile.picture %}
+                                        <img class="circle story"  src="{{ profile.picture.url }}">
+                                      {% else %}
+                                        <img class="circle story"  src="{% static "images/user.png" %}">
+                                      {% endif %}
+                                </a>
+                            </div>
+                            <div class="info">
+                                <p class="second_name">{{request.user.username}}</p>
+                                <p class="name">{{profile.first_name}}   {{ profilelast_name}}</p>
+                            </div>
+                        </div>
+                        <div class="switch">
+                            <a href="#">Switch</a>
+                        </div>
+                    </div>
+                    <div class="suggestions">
+                        <div class="title">
+                            <h4>Suggestions for you</h4>
+                            <a class="dark" href="#">See All</a>
+                        </div>
+                        {% for user in all_users %}
+                        {% if request.user.username != user.username %}
+                        <div class="cart">
+                            <div>
+                                <a href="{% url 'profile' user %}">
+                                <div class="img">
+                                {% if user.profile.picture %}
+                                    <img src="{{user.profile.picture.url }}" alt="Placeholder image">
+                                {% else %}
+                                    <img src="{% static "images/user.png" %}" alt="Placeholder image">
+                                {% endif %}
+                                </div>
+                            </a>
+                            <a href="{% url 'profile' user %}">
+                                <div class="info">
+                                    <p class="name">{{user.profile.first_name|title}} {{user.profile.last_name|title}}</p>
+                                    <p class="second_name">{{user.username}}</p>
+                                </div>
+                            </a>
+                            </div>
+                            <div class="switch">
+                                {% if user.is_authenticated and user != request.user %}
+                                {% if follow_status == True %}
+                                    <a href="{% url 'follow' user.profile 0 %}" ><button class="follow_text" style="background:dodgerblue">Unfollow</button></a>
+                                {% else %}
+                                    <a href="{% url 'follow' user 1 %}"><button class="follow_text" >follow</button></a>
+                                {% endif  %}
+                                {% endif %}
+                            </div>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            <!--***** followers_container end ****** -->
+
+        </div>
+
+        <!-- Modal for sending posts-->
+        <div class="modal fade" id="send_message_modal" tabindex="-1" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Share</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="send">
+                            <div class="search_person">
+                                <p>To:</p>
+                                <input type="text" placeholder="Search">
+                            </div>
+                            <p>Suggested</p>
+                            <div class="poeple">
+                                <div class="person">
+                                    <div class="d-flex">
+                                        <div class="img">
+                                            <img src="./images/profile_img.jpg" alt="">
+                                        </div>
+                                        <div class="content">
+                                            <div class="person">
+                                                <h4>namePerson</h4>
+                                                <span>zim ess</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <di class="circle">
+                                        <span></span>
+                                </div>
+                            </div>
+                            <div class="person">
+                                <div class="d-flex">
+                                    <div class="img">
+                                        <img src="./images/profile_img.jpg" alt="">
+                                    </div>
+                                    <div class="content">
+                                        <div class="person">
+                                            <h4>namePerson</h4>
+                                            <span>zim ess</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="circle">
+                                    <span></span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary">Send</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Modal for add messages-->
+        <div class="modal fade" id="message_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Comments</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="comments">
+                            <div class="comment">
+                                <div class="d-flex">
+                                    <div class="img">
+                                        <img src="./images/profile_img.jpg" alt="">
+                                    </div>
+                                    <div class="content">
+                                        <div class="person">
+                                            <h4>namePerson</h4>
+                                            <span>3j</span>
+                                        </div>
+                                        <p>Wow amzing shot</p>
+                                        <div class="replay">
+                                            <button class="replay">replay</button>
+                                            <button class="translation">see translation</button>
+                                        </div>
+                                        <div class="answers">
+                                            <button class="see_comment">
+                                                <span class="hide_com">Hide all responses</span>
+                                                <span class="show_c"> <span class="line"></span> See the <span> 1
+                                                    </span> answers</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="like">
+                                    <img class="not_loved" src="./images/love.png" alt="">
+                                    <img class="loved" src="./images/heart.png" alt="">
+                                    <p> 55</p>
+                                </div>
+                            </div>
+                            <div class="responses">
+                                <div class="response comment">
+                                    <div class="d-flex">
+                                        <div class="img">
+                                            <img src="./images/profile_img.jpg" alt="">
+                                        </div>
+                                        <div class="content">
+                                            <div class="person">
+                                                <h4>namePerson</h4>
+                                                <span>3j</span>
+                                            </div>
+                                            <p>Wow amzing shot</p>
+                                            <div class="replay">
+                                                <button>replay</button>
+                                                <button>see translation</button>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="like">
+                                        <img class="not_loved" src="./images/love.png" alt="">
+                                        <img class="loved" src="./images/heart.png" alt="">
+                                        <p> 55</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <form method="post">
+                            <div class="input">
+                                <img src="./images/profile_img.jpg" alt="">
+                                <input type="text" id="emoji_comment" placeholder="Add a comment..." />
+                            </div>
+                            <!-- <div class="emogi">
+                                <img src="./images/emogi.png" alt="">
+                            </div> -->
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Create model-->
+        <div class="modal fade" >
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title w-100 fs-5 d-flex align-items-end justify-content-between"
+                            id="exampleModalLabel">
+                            <span class="title_create">Create new post</span>
+                            <button class="next_btn_post btn_link"></button>
+                        </h1>
+                        <button type="button" class="btn-close" ></button>
+                    </div>
+                    <div class="modal-body">
+                        <img class="up_load" src="{% static "images/upload.png" %}" >
+                        <p>Drag photos and videos here</p>
+                        <button class="btn btn-primary btn_upload">
+                            select from your computer
+                            <form id="upload-form">
+                                <input class="input_select" type="file" id="image-upload" name="image-upload">
+                            </form>
+                        </button>
+                        <div id="image-container" class="hide_img">
+                        </div>
+                        <div id="image_description" class="hide_img">
+                            <div class="img_p"></div>
+                            <div class="description">
+                                <div class="cart">
+                                    <div>
+                                        <div class="img">
+                                            <img src="./images/profile_img.jpg">
+                                        </div>
+                                        <div class="info">
+                                            <p class="name">Zineb_essoussi</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <form>
+                                    <textarea type="text" id="emoji_create" placeholder="write your email"></textarea>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="post_published hide_img">
+                            <img src="{% static "images/uploaded_post.gif" %}" alt="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    {% block content %}
+    {% endblock %}
+
+    <!-- <script src="./sass/vender/bootstrap.bundle.js"></script>
+    <script src="./sass/vender/bootstrap.bundle.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js" integrity="sha384-zYPOMqeu1DAVkHiLqWBUTcbYfZ8osu1Nd6Z89ify25QV9guujx43ITvfi12/QExE" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.min.js" integrity="sha384-Y4oOpwW3duJdCWv5ly8SCFYWqFDsfob/3GkgExXKV4idmbt98QcxXYs9UoXAB7BZ" crossorigin="anonymous"></script>
+    <script src="{% static "owlcarousel/jquery.min.js" %}"></script>
+    <script src="{% static "owlcarousel/owl.carousel.min.js" %}"></script>
+    <script src="{% static "js/carousel.js" %}"></script>
+    <script src="{% static "js/init.js" %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/emojionearea/3.4.2/emojionearea.min.js"></script>
+    <script src="{% static "js/main.js" %}"></script>
+    <script src="{% static "js/slider.js" %}"></script>
+    <script src="{% static "js/init.js" %}"></script>
+</body>
+
+</html>

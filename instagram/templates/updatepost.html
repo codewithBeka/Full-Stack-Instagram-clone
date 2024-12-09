@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static "sass/modal.css" %}">
+  <link rel="shortcut icon" href="{% static "images/favicon.ico" %}" type="image/x-icon">
+  <title>Instagram</title>
+  <style>
+    /* CSS */
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .post-details {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 3px;
+      width: 1000px;
+      max-width: 90%;
+    }
+
+    .modal {
+      background-color: white;
+      border-radius: 5px;
+      padding: 20px;
+      width: 400px;
+      max-width: 90%;
+      position: relative;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+    }
+
+    .close-modal {
+      background-color: transparent;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .search-results {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .search-results .user {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+      cursor: pointer;
+    }
+
+    .search-results .user img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    .search-results .user .username {
+      font-weight: bold;
+    }
+
+    .img-privew img {
+      width: 200px;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .post-form {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .field{
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .field input,.field textarea{
+      width: 100%;
+      outline: none;
+      font-size: 15px;
+    }
+    .field input{
+      padding: 8px 22px;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- HTML -->
+  <div class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Create a Post</h2>
+
+        <a href="{% url "home" %}" ><button class="close-modal">&times;</button></a>
+      </div>
+      <div class="post-form">
+        <!-- <div class="img-privew">
+          <img src="img-1-1200x1000.jpg" class="show" alt="">
+        </div> -->
+        <div class="forms">
+       
+         <form method="post" action="" enctype="multipart/form-data" role="form" >
+            {% csrf_token %}
+            <div class="field">
+              <label class="label is-medium">Choose your files</label>
+              {{ form.picture }}              
+            </p>
+            </div>
+
+            <div class="field">
+              <label class="label is-medium">Caption</label>
+              {{ form.caption }}              
+            </p>
+            </div>
+
+            <div class="field">
+              <label class="label is-medium">Tags (add tags, separeted by commas)</label>
+              {{ form.tags }}              
+            </p>
+            </div>
+
+            <div class="field">
+              <p class="control">
+                <button type="submit" name="action" class="button is-success">
+                  Update
+                </button>
+              </p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</body>
+
+</html>
